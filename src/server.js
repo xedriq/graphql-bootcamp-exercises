@@ -8,9 +8,9 @@ const users = [
 ]
 
 const posts = [
-    { id: 1, title: 'test post 1', body: 'test body content 1', published: false },
-    { id: 2, title: 'test post 2', body: 'test body content 2', published: true },
-    { id: 3, title: 'test post 3', body: 'test body content 3', published: false },
+    { id: 1, title: 'test post 1', body: 'test body content 1', published: false, author: 1 },
+    { id: 2, title: 'test post 2', body: 'test body content 2', published: true, author: 1 },
+    { id: 3, title: 'test post 3', body: 'test body content 3', published: false, author: 2 },
 ]
 
 // Type definitions (Schema)
@@ -34,6 +34,7 @@ const typeDefs = `
         title: String!
         body: String!
         published: Boolean!
+        author: User!
     }
 `
 
@@ -75,6 +76,12 @@ const resolvers = {
             }
         }
 
+    },
+
+    Post: {
+        author(parent, args, ctx, info) {
+            return users.find(user => user.id === parent.author)
+        }
     }
 }
 
