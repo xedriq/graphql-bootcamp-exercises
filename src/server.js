@@ -8,16 +8,16 @@ const users = [
 ]
 
 const posts = [
-    { id: '11', title: 'test post 1', body: 'test body content 1', published: false, author: '1' },
-    { id: '12', title: 'test post 2', body: 'test body content 2', published: true, author: '1' },
-    { id: '13', title: 'test post 3', body: 'test body content 3', published: false, author: '2' },
+    { id: '11', title: 'GraphQL 101', body: 'test body content 1', published: false, author: '1' },
+    { id: '12', title: 'GraphQL 201', body: 'test body content 2', published: true, author: '1' },
+    { id: '13', title: 'GraphQL 301', body: 'test body content 3', published: false, author: '2' },
 ]
 
 const comments = [
-    { id: '21', text: "Graphql is interesting!", author: '3' },
-    { id: '22', text: "I want to master javascript.", author: '2' },
-    { id: '23', text: "NodeJS is awesome!", author: '1' },
-    { id: '24', text: "Be a front-end developer.", author: '2' },
+    { id: '21', text: "Graphql is interesting!", author: '3', postId: '11' },
+    { id: '22', text: "I want to master javascript.", author: '2', postId: '11' },
+    { id: '23', text: "NodeJS is awesome!", author: '1', postId: '12' },
+    { id: '24', text: "Be a front-end developer.", author: '2', postId: '13' },
 ]
 
 // Type definitions (Schema)
@@ -28,6 +28,10 @@ const typeDefs = `
         posts(query: String): [Post!]!
         post: Post!
         comments: [Comment!]!
+    }
+
+    type Mutation {
+        createUser(name:String!, email:String!, age:Int):User!
     }
 
     type User {
@@ -45,12 +49,14 @@ const typeDefs = `
         body: String!
         published: Boolean!
         author: User!
+        comments:[Comment!]!
     }
 
     type Comment {
         id: ID!
         text: String!
         author: User!
+        post: Post!
     }
 `
 
@@ -97,9 +103,18 @@ const resolvers = {
 
     },
 
+    Mutation: {
+        createUser(parent, args, ctx, info) {
+
+        }
+    },
+
     Post: {
         author(parent, args, ctx, info) {
             return users.find(user => user.id === parent.author)
+        },
+        comments(parent, args, ctx, info) {
+            return comments.filter(comment => comment.postId === parent.id)
         }
     },
 
@@ -115,6 +130,10 @@ const resolvers = {
     Comment: {
         author(parent, args, ctx, info) {
             return users.find(user => user.id === parent.author)
+        },
+
+        post(parent, args, ctx, info) {
+            return posts.find(post => post.id === parent.postId)
         }
     }
 
