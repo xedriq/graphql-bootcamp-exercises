@@ -17,6 +17,7 @@ const Mutation = {
 
         return user
     },
+
     deleteUser(parent, args, { db }, info) {
         const userIndex = db.users.findIndex(user => user.id === args.user.id)
 
@@ -26,6 +27,7 @@ const Mutation = {
 
         const deletedUsers = db.users.splice(userIndex, 1)
     },
+
     updateUser(parent, args, { db }, info) {
         const user = db.users.find(user => user.id === args.id)
 
@@ -53,7 +55,8 @@ const Mutation = {
 
         return user
     },
-    createPost(parent, args, { db }, info) {
+
+    createPost(parent, args, { db, pubsub }, info) {
         const userExist = db.users.some(user => user.id === args.post.author)
 
         if (!userExist) {
@@ -66,6 +69,8 @@ const Mutation = {
         }
 
         db.posts.push(post)
+
+        pubsub.publish('post', { post })
 
         return post
     },
@@ -105,7 +110,7 @@ const Mutation = {
         return post
     },
 
-    createComment(parent, args, { db }, info) {
+    createComment(parent, args, { db, pubsub }, info) {
         const userExist = db.users.some(user => user.id === args.comment.author)
         const postExist = db.posts.some(post => post.id === args.comment.postId)
 
@@ -129,6 +134,8 @@ const Mutation = {
         }
 
         db.comments.push(comment)
+
+        pubsub.publish(`COMMENT ${args.comment.postId}`, { comment })
 
         return comment
     },
