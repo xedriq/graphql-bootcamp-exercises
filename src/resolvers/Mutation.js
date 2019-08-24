@@ -73,7 +73,7 @@ const Mutation = {
         if (args.post.published) {
             pubsub.publish('post', {
                 post: {
-                    mutation: 'POST_CREATED',
+                    mutation: 'CREATED',
                     data: post
                 }
             })
@@ -96,7 +96,7 @@ const Mutation = {
         if (post.published) {
             pubsub.publish('post', {
                 post: {
-                    mutation: 'DELETED_POST',
+                    mutation: 'DELETED',
                     data: post
                 }
             })
@@ -181,7 +181,7 @@ const Mutation = {
 
         pubsub.publish(`COMMENT ${args.comment.postId}`, {
             comment: {
-                mutation: 'CREATED_COMMENT',
+                mutation: 'CREATED',
                 data: comment
             }
         })
@@ -221,7 +221,7 @@ const Mutation = {
 
         pubsub.publish(`COMMENT ${comment.postId}`, {
             comment: {
-                mutation: 'UPDATED_COMMENT',
+                mutation: 'UPDATED',
                 data: comment
             }
         })
